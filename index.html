@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Echo</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .wrap {
+            background-color: rgb(228, 232, 245);
+            width: 300px;
+            padding: 1em;
+            -webkit-border-radius: 5px;
+            -moz-border-radius: 5px;
+            border-radius: 5px;
+        }
+
+        .input-group {
+            padding: 0.5em;
+            font-family: helvetica, sans-serif;
+            font-size: 14px;
+            word-spacing: 0.6pt;
+            line-height: 1.4;
+        }
+
+        .view {
+            display: inline;
+            padding-left: 1em;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="wrap">
+        <div class="input-group">
+            <input type="text">
+            <div id="text-view" class="view"></div>
+        </div>
+
+        <div class="input-group">
+            <textarea></textarea>
+            <div id="textarea-view" class="view"></div>
+        </div>
+
+        <div class="input-group">
+            <label><input type="radio" name="sex" value="male">male</label>
+            <label><input type="radio" name="sex" value="female">female</label>
+            <div id="radio-view" class="view"></div>
+        </div>
+
+        <div class="input-group">
+            <label><input type="checkbox" name="vehicle" value="bike">bike</label>
+            <label><input type="checkbox" name="vehicle" value="car">car</label>
+            <div id="checkbox-view" class="view"></div>
+        </div>
+
+        <div class="input-group">
+            <select name="fruit">
+                <option value="orange">orange</option>
+                <option value="apple">apple</option>
+            </select>
+            <div id="select-view" class="view"></div>
+        </div>
+    </div>
+
+    <script src="lib/jquery-2.0.3.js"></script>
+    <script src="echo.js"></script>
+    <script src="execute.js"></script>
+
+</body>
+</html>
