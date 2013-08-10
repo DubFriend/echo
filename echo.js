@@ -189,6 +189,12 @@ echo.collection = function (fig) {
     render();
     bind();
 
+    that.get = function () {
+        return extractData(data);
+    };
+
+    //that.set = function (key, val) {};
+
     that.clearControls = function () {
         forEachEcho(data, function (echo) {
             echo.clearControl();
