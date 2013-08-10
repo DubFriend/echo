@@ -4,7 +4,7 @@ var $view = $('#view'),
         $control: $('textarea'),
         $view: $('#textarea-view'),
         render: function (data) {
-            return data.length || "";
+            return data ? data.length : "";
         }
     }),
     radio = echo.new({ $control: $('input[type="radio"]'), $view: $('#radio-view') }),
@@ -13,9 +13,13 @@ var $view = $('#view'),
 
     collection = echo.collection({
         data: {
-            title: 'Echo : auto-dynamic templating.',
-            text: text
+            title: 'Values',
+            items: [ text, textarea, radio, check, select ]
         },
-        template: '<h2>{{title}}</h2><h3>{{text}}</h3>',
+        template: '' +
+        '<h3>{{title}}</h3>' +
+        '<ol>' +
+            '{{#items}}<li>{{.}}</li>{{/items}}' +
+        '</ol>',
         $view: $('#template-view')
     });

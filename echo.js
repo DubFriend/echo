@@ -1,6 +1,5 @@
 (function () {
-"use strict";
-
+'use strict';
 
 //utility functions
 var forEach = function (collection, callback) {
@@ -11,7 +10,6 @@ var forEach = function (collection, callback) {
         }
     }
 };
-
 
 window.echo = {};
 
@@ -25,9 +23,7 @@ echo.new = function (fig) {
         data,
         $control = fig.$control,
         $view = fig.$view,
-        identity = function (a) { return a; },
-        getter = fig.getter || identity,
-        setter = fig.setter || identity,
+
         render = fig.render || function (data) {
             return (data || "").toString();
         },
@@ -40,7 +36,10 @@ echo.new = function (fig) {
 
         bind = function () {
             if($control) {
-                if($control.is('input[type="text"]') || $control.is('textarea')) {
+                if(
+                    $control.is('input[type="text"]') ||
+                    $control.is('textarea')
+                ) {
                     $control.keyup(function() {
                         that.set($(this).val());
                     });
@@ -85,23 +84,46 @@ echo.new = function (fig) {
 
     bind();
 
+    that.render = function () {
+        return render(data);
+    };
+
     that.get = function () {
-        return getter(data);
+        return data;
     };
 
     that.set = function (newData) {
-        data = setter(newData);
+        data = newData;
         updateView(that.get());
         publish(newData);
+    };
+
+    that.clear = function () {
+        that.set(null);
+        that.clearControl();
     };
 
     that.onChange = function (callback) {
         subscribers.push(callback);
     };
 
+    that.clearControl = function () {
+        if($control.is('input[type="text"]') || $control.is('textarea')) {
+            $control.val('');
+        }
+        else if(
+            $control.is('input[type="radio"]') ||
+            $control.is('input[type="checkbox"]')
+        ) {
+            $control.prop('checked', false);
+        }
+        else if($control.is('select')) {
+            $control.val([]);
+        }
+    };
+
     return that;
 };
-
 
 
 //creates instance of a collection of data-bindings
@@ -112,15 +134,38 @@ echo.collection = function (fig) {
         data = fig.data,
         templator = fig.templator || Mustache,
 
+        forEachEcho = function (data, callback) {
+            if(data instanceof Echo) {
+                callback(data);
+            }
+            else if(data instanceof Object) {
+                forEach(data, function (val) {
+                    forEachEcho(val, callback);
+                });
+            }
+        },
+
         extractData = function (data) {
             var extracted;
             if(data instanceof Echo) {
-                extracted = data.get();
+                extracted = data.render();
+            }
+            else if(data instanceof Array) {
+                extracted = [];
+                forEach(data, function (val) {
+                    var temp = extractData(val);
+                    if(temp) {
+                        extracted.push(temp);
+                    }
+                });
             }
             else if(data instanceof Object) {
-                extracted = data instanceof Array ? [] : {};
+                extracted = {};
                 forEach(data, function (val, key) {
-                    extracted[key] = extractData(val);
+                    var tempData = extractData(val);
+                    if(tempData) {
+                        extracted[key] = extractData(val);
+                    }
                 });
             }
             else {
@@ -129,31 +174,35 @@ echo.collection = function (fig) {
             return extracted;
         },
 
-        bind = function (item) {
-            if(item instanceof Echo) {
-                item.onChange(function () {
-                    render(data);
-                });
-            }
-            else if(item instanceof Object) {
-                forEach(item, function (val, key) {
-                    bind(val);
-                });
-            }
+        bind = function () {
+            forEachEcho(data, function (echo) {
+                echo.onChange(render);
+            });
         },
 
-        render = function (data) {
+        render = function () {
             if(template && $view) {
                 $view.html(templator.render(template, extractData(data)));
             }
         };
 
-    render(data);
-    bind(data);
+    render();
+    bind();
+
+    that.clearControls = function () {
+        forEachEcho(data, function (echo) {
+            echo.clearControl();
+        });
+    };
+
+    that.clear = function () {
+        forEachEcho(data, function (echo) {
+            echo.clear();
+        });
+    };
 
     return that;
 };
-
 
 
 }());

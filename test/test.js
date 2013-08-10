@@ -1,5 +1,5 @@
 (function () {
-"use strict";
+'use strict';
 var $control, $view, echoObject;
 
 var setup = function (fig) {
@@ -26,7 +26,13 @@ module('text input', {
     }
 });
 
-test("updates view on manual model set", testUpdatesOnManual);
+test('updates view on manual model set', testUpdatesOnManual);
+
+test('clearControl', function () {
+    $control.val('foo');
+    echoObject.clearControl();
+    deepEqual('', $control.val());
+});
 
 test('updates model and view on keyup', function () {
     $control.val('foo');
@@ -46,18 +52,24 @@ module('textarea', {
     }
 });
 
-test("updates view on manual model set", testUpdatesOnManual);
+test('updates view on manual model set', testUpdatesOnManual);
 
-test("updates model and view on keyup", function () {
-    $control.val("foo");
-    $control.trigger($.Event("keyup"));
-    deepEqual(echoObject.get(), 'foo', "model is updated");
-    deepEqual($view.html(), 'foo', "view is updated");
+test('clearControl', function () {
+    $control.val('foo');
+    echoObject.clearControl();
+    deepEqual('', $control.val());
+});
+
+test('updates model and view on keyup', function () {
+    $control.val('foo');
+    $control.trigger($.Event('keyup'));
+    deepEqual(echoObject.get(), 'foo', 'model is updated');
+    deepEqual($view.html(), 'foo', 'view is updated');
 });
 
 // -----------------------------------------------------------------------------
 
-module("radio", {
+module('radio', {
     setup: function () {
         setup({
             html: '<input type="radio" name="sex" value="male">' +
@@ -67,7 +79,13 @@ module("radio", {
     }
 });
 
-test("updates view on manual model set", testUpdatesOnManual);
+test('updates view on manual model set', testUpdatesOnManual);
+
+test('clearControl', function () {
+    $('input[value="male"]').prop('checked', true);
+    echoObject.clearControl();
+    deepEqual(false, $('input[value="male"]').prop('checked'));
+});
 
 test('updates model and view on click', function () {
     $('input[value="male"]').prop('checked', true);
@@ -89,6 +107,12 @@ module('checkbox', {
 });
 
 test("updates view on manual model set", testUpdatesOnManual);
+
+test('clearControl', function () {
+    $('input[value="bike"]').prop('checked', true);
+    echoObject.clearControl();
+    deepEqual(false, $('input[value="bike"]').prop('checked'));
+});
 
 test('updates model and view on change', function () {
     $('input[value="bike"]').prop('checked', true);
@@ -119,7 +143,13 @@ module('select', {
     }
 });
 
-test("updates view on manual model set", testUpdatesOnManual);
+test('updates view on manual model set', testUpdatesOnManual);
+
+test('clearControl', function () {
+    $('option[value="orange"]').prop('selected', true);
+    echoObject.clearControl();
+    deepEqual($('option[value="orange"]').prop('selected'), false);
+});
 
 test('updates model and view on change', function () {
     $('option[value="orange"]').prop('selected', true).trigger($.Event('click'));

@@ -8,40 +8,23 @@
             color: rgb(48, 48, 48);
             font-family: helvetica, sans-serif;
             font-size: 14px;
-            word-spacing: 0.6pt;
-            line-height: 1.4;
         }
-
         .wrap {
-            background-color: rgb(225, 240, 188);
-            border: 1px solid rgb(111, 158, 111);
-            padding: 1em;
             margin: 1em;
-            -webkit-border-radius: 5px;
-            -moz-border-radius: 5px;
-            border-radius: 5px;
         }
-
         .input-group {
-            padding: 0.5em;
+            margin-bottom: 0.5em
         }
-
         .view {
             display: inline;
             padding-left: 1em;
             font-weight: bold;
         }
-
-        #template-view h3 {
-            height: 1em;
-        }
     </style>
 </head>
 <body>
-
-    <div id="template-view" class="wrap"></div>
-
     <div class="wrap">
+        <h2>Auto Dynamic Templating.</h2>
         <div class="input-group">
             <input type="text">
             <div id="text-view" class="view"></div>
@@ -71,12 +54,13 @@
             </select>
             <div id="select-view" class="view"></div>
         </div>
+
+        <div id="template-view"></div>
     </div>
 
     <script src="lib/jquery-2.0.3.js"></script>
     <script src="lib/mustache.js"></script>
     <script src="echo.js"></script>
     <script src="execute.js"></script>
-
 </body>
 </html>
