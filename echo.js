@@ -13,7 +13,7 @@ var forEach = function (collection, callback) {
 
 window.echo = {};
 
-//In order to distinguish echo objects from regular objects.
+//in order to distinguish echo objects from other objects.
 var Echo = function () {};
 
 //creates a new instance of a one-to-one data binding.
@@ -73,6 +73,9 @@ echo.new = function (fig) {
                         that.set($control.find('option:selected').val());
                     });
                 }
+                else {
+                    throw 'invalid control type';
+                }
             }
         },
         subscribers = [],
@@ -98,13 +101,13 @@ echo.new = function (fig) {
         publish(newData);
     };
 
+    that.onChange = function (callback) {
+        subscribers.push(callback);
+    };
+
     that.clear = function () {
         that.set(null);
         that.clearControl();
-    };
-
-    that.onChange = function (callback) {
-        subscribers.push(callback);
     };
 
     that.clearControl = function () {
@@ -131,7 +134,7 @@ echo.collection = function (fig) {
     var that = {},
         $view = fig.$view,
         template = fig.template,
-        data = fig.data,
+        items = fig.data,
         templator = fig.templator || Mustache,
 
         forEachEcho = function (data, callback) {
@@ -163,9 +166,7 @@ echo.collection = function (fig) {
                 extracted = {};
                 forEach(data, function (val, key) {
                     var tempData = extractData(val);
-                    if(tempData) {
-                        extracted[key] = extractData(val);
-                    }
+                    extracted[key] = extractData(val);
                 });
             }
             else {
@@ -175,34 +176,47 @@ echo.collection = function (fig) {
         },
 
         bind = function () {
-            forEachEcho(data, function (echo) {
+            forEachEcho(items, function (echo) {
                 echo.onChange(render);
             });
         },
 
         render = function () {
             if(template && $view) {
-                $view.html(templator.render(template, extractData(data)));
+                $view.html(templator.render(template, extractData(items)));
             }
         };
 
     render();
     bind();
 
-    that.get = function () {
-        return extractData(data);
+    that.get = function (key) {
+        if(key) {
+            return extractData(items[key]);
+        }
+        else {
+            return extractData(items);
+        }
     };
 
-    //that.set = function (key, val) {};
+    that.set = function (key, val) {
+        if(items[key] instanceof Echo) {
+            items[key].set(val);
+        }
+        else {
+            items[key] = val;
+            render();
+        }
+    };
 
-    that.clearControls = function () {
-        forEachEcho(data, function (echo) {
+    that.clearControl = function () {
+        forEachEcho(items, function (echo) {
             echo.clearControl();
         });
     };
 
     that.clear = function () {
-        forEachEcho(data, function (echo) {
+        forEachEcho(items, function (echo) {
             echo.clear();
         });
     };

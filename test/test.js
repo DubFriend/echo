@@ -205,7 +205,6 @@ test('no $view', function () {
     deepEqual($view.html(), '', 'view is not updated');
 });
 
-// -----------------------------------------------------------------------------
 
 }());
 
@@ -218,7 +217,6 @@ var collection,
     echoA,
     echoB,
     $echoBView,
-
     getViewData = function () {
         return {
             normal: $('#normal').html(),
@@ -239,7 +237,7 @@ module('collection', {
         $echoBView = $('#echoB-view');
         echoB = echo.new({ $view: $echoBView });
         collection = echo.collection({
-            data:{
+            data: {
                 normal: 'normal-data',
                 echoA: echoA,
                 echoB: echoB
@@ -267,6 +265,29 @@ test('updates template on model modified', function () {
         { normal: 'normal-data', echoA: 'foo', echoB: '' },
         'updates template'
     );
+});
+
+test('get no index', function () {
+    deepEqual(
+        collection.get(),
+        { normal: 'normal-data', echoA: '', echoB: '' },
+        'gets all data if not passed a key'
+    );
+});
+
+test('get with index', function () {
+    deepEqual(collection.get('normal'), 'normal-data', 'gets selected data');
+});
+
+test('set', function () {
+    collection.set('echoA', 'foo');
+    deepEqual(collection.get('echoA'), 'foo', 'collection is set');
+    deepEqual(echoA.get(), 'foo', 'echo object is set');
+});
+
+test('set - non echo data', function () {
+    collection.set('normal', 'foo');
+    deepEqual(getViewData().normal, 'foo', 'view is updated');
 });
 
 
